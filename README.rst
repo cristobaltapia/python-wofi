@@ -3,7 +3,7 @@ python-wofi
 ===========
 
 A Python module to make simple GUIs using Wofi.
-(forked from the original python-rofi module)
+(forked from the original python-wofi module)
 
 
 What is Wofi?
@@ -42,7 +42,7 @@ Data entry
 The simplest example is to create a Wofi instance and prompt the user to enter
 a piece of text::
 
-    from rofi import Rofi
+    from wofi import Wofi
     r = Wofi()
     name = r.text_entry('What is your name? ')
 
@@ -162,18 +162,18 @@ documentation for full details of these parameters.
 
 * ``location``:  The position of the window on the screen.
 
-* You can also pass in arbitrary arguments to rofi through the ``rofi_args``
+* You can also pass in arbitrary arguments to wofi through the ``wofi_args``
   parameter. These have to be passed in as a list of strings, with every
   argument in a seperate string. For example, to make a selection case
   insensitive::
     
     r = Wofi()
     r.select('Choose one', ['option 1', 'option 2', 'option 3'],
-        rofi_args=['-i'])
+        wofi_args=['-i'])
   
   or, to choose a different style for an instance of ``Wofi``::
 
-    r = Wofi(rofi_args=['-theme', 'path/to/theme.rasi'])
+    r = Wofi(wofi_args=['-theme', 'path/to/theme.rasi'])
     r.status('Stuff is happening, please wait...')
 
 
@@ -183,7 +183,7 @@ Requirements
 ============
 
 You need to have the ``wofi`` executable available on the system path (i.e.,
-install Wofi!). Everything else that python-rofi needs is provided by the
+install Wofi!). Everything else that python-wofi needs is provided by the
 Python standard libraries.
 
 
@@ -199,7 +199,7 @@ and 3 branches respectively.
 What license does it use?
 =========================
 
-The MIT license, the same as python-rofi.
+The MIT license, the same as python-wofi.
 
 
 Bug reports
