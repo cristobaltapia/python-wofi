@@ -2,6 +2,9 @@
 #
 # The MIT License
 #
+# Copyright (c) 2020 Cristóbal Tapia <crtapia@gmail.com>
+#
+# This library is a fork of python-rofi:
 # Copyright (c) 2016, 2017 Blair Bonnett <blair.bonnett@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,20 +54,20 @@ else:
     Popen = ContextManagedPopen
 
 
-class Rofi(object):
-    """Class to facilitate making simple GUIs with Rofi.
+class Wofi(object):
+    """Class to facilitate making simple GUIs with Wofi.
 
-    Rofi is a popup window system with minimal dependencies (xlib and pango).
+    Wofi is a popup window system with minimal dependencies (xlib and pango).
     It was designed as a window switcher. Its basic operation is to display a
     list of options and let the user pick one.
 
-    This class provides a set of methods to make simple GUIs with Rofi. It does
-    this by using the subprocess module to call Rofi externally. Many of the
+    This class provides a set of methods to make simple GUIs with Wofi. It does
+    this by using the subprocess module to call Wofi externally. Many of the
     methods are blocking.
 
     Some strings can contain Pango markup for additional formatting (those that
     can are noted as such in the docstrings). Any text in these strings *must*
-    be escaped before calling Rofi. The class method Rofi.escape() performs
+    be escaped before calling Wofi. The class method Wofi.escape() performs
     this escaping for you. Make sure you call this on the text prior to adding
     Pango markup, otherwise the markup will be escaped and displayed to the
     user. See https://developer.gnome.org/pango/stable/PangoMarkupFormat.html
@@ -72,8 +75,8 @@ class Rofi(object):
 
     """
     def __init__(self, lines=None, fixed_lines=None, width=None,
-                 fullscreen=None, location=None,
-                 exit_hotkeys=('Alt+F4', 'Control+q'), rofi_args=None):
+                 height=None, fullscreen=None, location=None,
+                 exit_hotkeys=('Alt+F4', 'Control+q'), wofi_args=None):
         """
         Parameters
         ----------
@@ -86,7 +89,7 @@ class Rofi(object):
         The following parameters set default values for various layout options,
         and can be overwritten in any display method. A value of None means
         use the system default, which may be set by a configuration file or
-        fall back to the compile-time default. See the Rofi documentation for
+        fall back to the compile-time default. See the Wofi documentation for
         full details on what the values mean.
 
         lines: positive integer
@@ -103,8 +106,8 @@ class Rofi(object):
             If True, use the full height and width of the screen.
         location: integer
             The position of the window on the screen.
-        rofi_args: list
-            A list of other arguments to pass in to every call to rofi. These get appended
+        wofi_args: list
+            A list of other arguments to pass in to every call to wofi. These get appended
             after any other arguments
 
         """
@@ -115,10 +118,11 @@ class Rofi(object):
         self.lines = lines
         self.fixed_lines = fixed_lines
         self.width = width
+        self.height = height
         self.fullscreen = fullscreen
         self.location = location
         self.exit_hotkeys = exit_hotkeys
-        self.rofi_args = rofi_args or []
+        self.wofi_args = wofi_args or []
 
         # Don't want a window left on the screen if we exit unexpectedly
         # (e.g., an unhandled exception).
@@ -151,7 +155,6 @@ class Rofi(object):
             60: '&lt;',
             62: '&gt;'
         })
-
 
 
     def close(self):
@@ -265,7 +268,7 @@ class Rofi(object):
         # Number of lines.
         lines = kwargs.get('lines', self.lines)
         if lines:
-            args.extend(['-lines', str(lines)])
+            args.extend(['--lines', str(lines)])
         fixed_lines = kwargs.get('fixed_lines', self.fixed_lines)
         if fixed_lines:
             args.extend(['-fixed-num-lines', str(fixed_lines)])
@@ -273,7 +276,12 @@ class Rofi(object):
         # Width.
         width = kwargs.get('width', self.width)
         if width is not None:
-            args.extend(['-width', str(width)])
+            args.extend(['--width', str(width)])
+
+        # Height
+        height = kwargs.get('height', self.height)
+        if height is not None:
+            args.extend(['--height', str(height)])
 
         # Fullscreen mode?
         fullscreen = kwargs.get('fullscreen', self.fullscreen)
@@ -283,16 +291,16 @@ class Rofi(object):
         # Location on screen.
         location = kwargs.get('location', self.location)
         if location is not None:
-            args.extend(['-location', str(location)])
+            args.extend(['--location', str(location)])
 
         # Any other arguments
-        args.extend(self.rofi_args)
+        args.extend(self.wofi_args)
 
         # Done.
         return args
 
 
-    def error(self, message, rofi_args=None, **kwargs):
+    def error(self, message, wofi_args=None, **kwargs):
         """Show an error window.
 
         This method blocks until the user presses a key.
@@ -306,17 +314,17 @@ class Rofi(object):
             Error message to show.
 
         """
-        rofi_args = rofi_args or []
+        wofi_args = wofi_args or []
         # Generate arguments list.
-        args = ['rofi', '-e', message]
+        args = ['wofi', '-p', message]
         args.extend(self._common_args(allow_fullscreen=False, **kwargs))
-        args.extend(rofi_args)
+        args.extend(wofi_args)
 
         # Close any existing window and show the error.
         self._run_blocking(args)
 
 
-    def status(self, message, rofi_args=None, **kwargs):
+    def status(self, message, wofi_args=None, **kwargs):
         """Show a status message.
 
         This method is non-blocking, and intended to give a status update to
@@ -334,17 +342,18 @@ class Rofi(object):
             Progress message to show.
 
         """
-        rofi_args = rofi_args or []
+        wofi_args = wofi_args or []
         # Generate arguments list.
-        args = ['rofi', '-e', message]
+        args = ['wofi', '-p', message]
         args.extend(self._common_args(allow_fullscreen=False, **kwargs))
-        args.extend(rofi_args)
+        args.extend(wofi_args)
 
         # Update the status.
         self._run_nonblocking(args)
 
 
-    def select(self, prompt, options, rofi_args=None, message="", select=None, **kwargs):
+    def select(self, prompt, options, wofi_args=None, message="", select=None,
+            keep_newlines=False, **kwargs):
         """Show a list of options and return user selection.
 
         This method blocks until the user makes their choice.
@@ -385,12 +394,15 @@ class Rofi(object):
             key N.
 
         """
-        rofi_args = rofi_args or []
+        wofi_args = wofi_args or []
         # Replace newlines and turn the options into a single string.
-        optionstr = '\n'.join(option.replace('\n', ' ') for option in options)
+        if keep_newlines:
+            optionstr = ''.join(option for option in options)
+        else:
+            optionstr = '\n'.join(option.replace('\n', ' ') for option in options)
 
         # Set up arguments.
-        args = ['rofi', '-dmenu', '-p', prompt, '-format', 'i']
+        args = ['wofi', '--dmenu', '-p', prompt, '-Ddmenu-print_line_num=true']
         if select is not None:
             args.extend(['-selected-row', str(select)])
 
@@ -437,7 +449,7 @@ class Rofi(object):
 
         # Add in common arguments.
         args.extend(self._common_args(**kwargs))
-        args.extend(rofi_args)
+        args.extend(wofi_args)
 
         # Run the dialog.
         returncode, stdout = self._run_blocking(args, input=optionstr)
@@ -456,13 +468,13 @@ class Rofi(object):
             if key in exit_keys:
                 raise SystemExit()
         else:
-            self.exit_with_error("Unexpected rofi returncode {0:d}.".format(results.returncode))
+            self.exit_with_error("Unexpected wofi returncode {0:d}.".format(results.returncode))
 
         # And return.
         return index, key
 
 
-    def generic_entry(self, prompt, validator=None, message=None, rofi_args=None, **kwargs):
+    def generic_entry(self, prompt, validator=None, message=None, wofi_args=None, **kwargs):
         """A generic entry box.
 
         Parameters
@@ -490,17 +502,17 @@ class Rofi(object):
         Examples
         --------
         Enforce a minimum entry length:
-        >>> r = Rofi()
+        >>> r = Wofi()
         >>> validator = lambda s: (s, None) if len(s) > 6 else (None, "Too short")
         >>> r.generic_entry('Enter a 7-character or longer string: ', validator)
 
         """
         error = ""
-        rofi_args = rofi_args or []
+        wofi_args = wofi_args or []
 
         # Keep going until we get something valid.
         while True:
-            args = ['rofi', '-dmenu', '-p', prompt, '-format', 's']
+            args = ['wofi', '-dmenu', '-p', prompt]
 
             # Add any error to the given message.
             msg = message or ""
@@ -514,7 +526,7 @@ class Rofi(object):
 
             # Add in common arguments.
             args.extend(self._common_args(**kwargs))
-            args.extend(rofi_args)
+            args.extend(wofi_args)
 
             # Run it.
             returncode, stdout = self._run_blocking(args, input="")
@@ -534,7 +546,7 @@ class Rofi(object):
 
 
     def text_entry(self, prompt, message=None, allow_blank=False, strip=True,
-            rofi_args=None, **kwargs):
+            wofi_args=None, **kwargs):
         """Prompt the user to enter a piece of text.
 
         Parameters
@@ -563,10 +575,10 @@ class Rofi(object):
 
             return text, None
 
-        return self.generic_entry(prompt, text_validator, message, rofi_args, **kwargs)
+        return self.generic_entry(prompt, text_validator, message, wofi_args, **kwargs)
 
 
-    def integer_entry(self, prompt, message=None, min=None, max=None, rofi_args=None, **kwargs):
+    def integer_entry(self, prompt, message=None, min=None, max=None, wofi_args=None, **kwargs):
         """Prompt the user to enter an integer.
 
         Parameters
@@ -604,10 +616,10 @@ class Rofi(object):
 
             return value, None
 
-        return self.generic_entry(prompt, integer_validator, message, rofi_args, **kwargs)
+        return self.generic_entry(prompt, integer_validator, message, wofi_args, **kwargs)
 
 
-    def float_entry(self, prompt, message=None, min=None, max=None, rofi_args=None, **kwargs):
+    def float_entry(self, prompt, message=None, min=None, max=None, wofi_args=None, **kwargs):
         """Prompt the user to enter a floating point number.
 
         Parameters
@@ -645,10 +657,10 @@ class Rofi(object):
 
             return value, None
 
-        return self.generic_entry(prompt, float_validator, message, rofi_args, **kwargs)
+        return self.generic_entry(prompt, float_validator, message, wofi_args, **kwargs)
 
 
-    def decimal_entry(self, prompt, message=None, min=None, max=None, rofi_args=None, **kwargs):
+    def decimal_entry(self, prompt, message=None, min=None, max=None, wofi_args=None, **kwargs):
         """Prompt the user to enter a decimal number.
 
         Parameters
@@ -686,11 +698,11 @@ class Rofi(object):
 
             return value, None
 
-        return self.generic_entry(prompt, decimal_validator, message, rofi_args, **kwargs)
+        return self.generic_entry(prompt, decimal_validator, message, wofi_args, **kwargs)
 
 
     def date_entry(self, prompt, message=None, formats=['%x', '%d/%m/%Y'],
-            show_example=False, rofi_args=None, **kwargs):
+            show_example=False, wofi_args=None, **kwargs):
         """Prompt the user to enter a date.
 
         Parameters
@@ -734,11 +746,11 @@ class Rofi(object):
             message = message or ""
             message += "Today's date in the correct format: " + datetime.now().strftime(formats[0])
 
-        return self.generic_entry(prompt, date_validator, message, rofi_args, **kwargs)
+        return self.generic_entry(prompt, date_validator, message, wofi_args, **kwargs)
 
 
     def time_entry(self, prompt, message=None, formats=['%X', '%H:%M', '%I:%M', '%H.%M',
-        '%I.%M'], show_example=False, rofi_args=None, **kwargs):
+        '%I.%M'], show_example=False, wofi_args=None, **kwargs):
         """Prompt the user to enter a time.
 
         Parameters
@@ -782,11 +794,11 @@ class Rofi(object):
             message = message or ""
             message += "Current time in the correct format: " + datetime.now().strftime(formats[0])
 
-        return self.generic_entry(prompt, time_validator, message, rofi_args=None, **kwargs)
+        return self.generic_entry(prompt, time_validator, message, wofi_args=None, **kwargs)
 
 
     def datetime_entry(self, prompt, message=None, formats=['%x %X'], show_example=False,
-            rofi_args=None, **kwargs):
+            wofi_args=None, **kwargs):
         """Prompt the user to enter a date and time.
 
         Parameters
@@ -830,7 +842,7 @@ class Rofi(object):
             message = message or ""
             message += "Current date and time in the correct format: " + datetime.now().strftime(formats[0])
 
-        return self.generic_entry(prompt, datetime_validator, message, rofi_args, **kwargs)
+        return self.generic_entry(prompt, datetime_validator, message, wofi_args, **kwargs)
 
 
     def exit_with_error(self, error, **kwargs):

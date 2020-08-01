@@ -1,35 +1,33 @@
 ===========
-python-rofi
+python-wofi
 ===========
 
-A Python module to make simple GUIs using Rofi.
+A Python module to make simple GUIs using Wofi.
+(forked from the original python-rofi module)
 
 
-What is Rofi?
+What is Wofi?
 =============
 
-Rofi_ is a popup window switcher with minimal dependencies. Its basic operation
+Wofi_ is a popup window switcher with minimal dependencies. Its basic operation
 is to display a list of options and let the user pick one. The following
-screenshot is shamelessly hotlinked from the Rofi website (which you should
-probably visit if you want actual details about Rofi!) and shows it being used
-by the teiler_ screenshot application.
+screenshot is shamelessly hotlinked from the wofi website (which you should
+probably visit if you want actual details about wofi!).
 
-.. image:: https://davedavenport.github.io/rofi/images/rofi/dmenu-replacement.png
-   :alt: A screenshot of the teiler application using Rofi.
+.. image:: https://f.cloudninja.pw/Scaled_4.png
+   :alt: A screenshot of Wofi.
 
-.. _Rofi: https://davedavenport.github.io/rofi/
-
-.. _teiler: https://carnager.github.io/teiler/
+.. _Wofi: https://hg.sr.ht/~scoopta/wofi
 
 
 What is this module?
 ====================
 
-It simplifies making simple GUIs using Rofi. It provides a class with a number
+It simplifies making simple GUIs using Wofi. It provides a class with a number
 of methods for various GUI actions (show messages, pick one of these options,
-enter some text / a number). These are translated to the appropriate Rofi
+enter some text / a number). These are translated to the appropriate Wofi
 command line options, and then the standard subprocess_ module is used to run
-Rofi. Any output is then processed and returned to you to do whatever you like
+Wofi. Any output is then processed and returned to you to do whatever you like
 with.
 
 .. _subprocess: https://docs.python.org/3/library/subprocess.html
@@ -41,11 +39,11 @@ Examples
 Data entry
 ~~~~~~~~~~
 
-The simplest example is to create a Rofi instance and prompt the user to enter
+The simplest example is to create a Wofi instance and prompt the user to enter
 a piece of text::
 
     from rofi import Rofi
-    r = Rofi()
+    r = Wofi()
     name = r.text_entry('What is your name? ')
 
 There are also entry methods for integers, floating-point numbers, and decimal
@@ -135,9 +133,9 @@ can contain Pango_ markup::
     r.text_entry('What are your goals for this year? ', message='Be <b>bold</b>!')
 
 If you need to escape a string to avoid it being mistaken for markup, use the
-``Rofi.escape()`` class method::
+``Wofi.escape()`` class method::
 
-    msg = Rofi.escape('Format: <firstname> <lastname>')
+    msg = Wofi.escape('Format: <firstname> <lastname>')
     r.text_entry('Enter your name: ', message=msg)
 
 .. _Pango:  https://developer.gnome.org/pango/stable/PangoMarkupFormat.html
@@ -147,7 +145,7 @@ Customisation
 
 There are a number of options available to customise the display. These can be
 set in the initialiser to apply to every dialog displayed, or you can pass them
-to any of the display methods to change just that dialog. See the Rofi
+to any of the display methods to change just that dialog. See the Wofi
 documentation for full details of these parameters.
 
 * ``lines``: The maximum number of lines to show before scrolling.
@@ -169,13 +167,13 @@ documentation for full details of these parameters.
   argument in a seperate string. For example, to make a selection case
   insensitive::
     
-    r = Rofi()
+    r = Wofi()
     r.select('Choose one', ['option 1', 'option 2', 'option 3'],
         rofi_args=['-i'])
   
-  or, to choose a different style for an instance of ``Rofi``::
+  or, to choose a different style for an instance of ``Wofi``::
 
-    r = Rofi(rofi_args=['-theme', 'path/to/theme.rasi'])
+    r = Wofi(rofi_args=['-theme', 'path/to/theme.rasi'])
     r.status('Stuff is happening, please wait...')
 
 
@@ -184,8 +182,8 @@ documentation for full details of these parameters.
 Requirements
 ============
 
-You need to have the ``rofi`` executable available on the system path (i.e.,
-install Rofi!). Everything else that python-rofi needs is provided by the
+You need to have the ``wofi`` executable available on the system path (i.e.,
+install Wofi!). Everything else that python-rofi needs is provided by the
 Python standard libraries.
 
 
@@ -201,7 +199,7 @@ and 3 branches respectively.
 What license does it use?
 =========================
 
-The MIT license, the same as Rofi itself.
+The MIT license, the same as python-rofi.
 
 
 Bug reports
@@ -210,5 +208,5 @@ Bug reports
 The project is developed on GitHub_. Please file any bug reports or feature
 requests on the Issues_ page there.
 
-.. _GitHub: https://github.com/bcbnz/python-rofi
-.. _Issues: https://github.com/bcbnz/python-rofi/issues
+.. _GitHub: https://github.com/cristobaltapia/python-wofi
+.. _Issues: https://github.com/cristobaltapia/python-wofi/issues
