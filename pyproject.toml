@@ -11,6 +11,9 @@ keywords = ["wofi"]
 include = [
     "LICENSE"
 ]
+exclude = [
+    ".gitignore"
+]
 packages = [
     {include = "wofi.py"}
 ]
