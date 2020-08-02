@@ -11,10 +11,12 @@ A Python module to make simple GUIs using Wofi.
 What is Wofi?
 =============
 
-Wofi_ is a popup window switcher with minimal dependencies. Its basic operation
-is to display a list of options and let the user pick one. The following
-screenshot is shamelessly hotlinked from the wofi website (which you should
-probably visit if you want actual details about wofi!).
+
+Wofi is a launcher/menu program for wlroots based wayland compositors such as
+sway. Its basic operation is to display a list of options and let the user
+pick one. The following screenshot is shamelessly hotlinked from the wofi
+website (which you should probably visit if you want actual details about
+wofi!).
 
 .. image:: https://f.cloudninja.pw/Scaled_4.png
    :alt: A screenshot of Wofi.
