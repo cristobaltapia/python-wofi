@@ -2,10 +2,12 @@
 python-wofi
 ===========
 
-A Python module to make simple GUIs using Wofi.
+A Python module to make simple GUIs using Wofi_.
 (forked from the original `python-rofi`_ module)
 
 .. _`python-rofi`: https://github.com/bcbnz/python-rofi
+
+.. _Wofi: https://hg.sr.ht/~scoopta/wofi
 
 
 What is Wofi?
