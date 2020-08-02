@@ -20,9 +20,9 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-pydocstyle = "^5.0.2"
 
 [tool.poetry.dev-dependencies]
+pydocstyle = "^5.0.2"
 
 [build-system]
 requires = ["poetry>=0.12"]
