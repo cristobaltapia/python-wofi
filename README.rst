@@ -3,7 +3,7 @@ python-wofi
 ===========
 
 A Python module to make simple GUIs using Wofi.
-(forked from the original _`python-rofi` module)
+(forked from the original `python-rofi`_ module)
 
 .. _`python-rofi`: https://github.com/bcbnz/python-rofi
 
