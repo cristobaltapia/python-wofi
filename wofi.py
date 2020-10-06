@@ -123,6 +123,7 @@ class Wofi(object):
         self.location = location
         self.exit_hotkeys = exit_hotkeys
         self.wofi_args = wofi_args or []
+        self.wofi_exe = "wofi"
 
         # Don't want a window left on the screen if we exit unexpectedly
         # (e.g., an unhandled exception).
@@ -222,7 +223,7 @@ class Wofi(object):
 
         # Use the run() method if available (Python 3.5+).
         if hasattr(subprocess, 'run'):
-            result = subprocess.run(args, input=input, **kwargs)
+            result = subprocess.run(args, input=input, check=True, **kwargs)
             return result.returncode, result.stdout
 
         # Have to do our own. If we need to feed stdin, we must open a pipe.
@@ -402,7 +403,7 @@ class Wofi(object):
             optionstr = '\n'.join(option.replace('\n', ' ') for option in options)
 
         # Set up arguments.
-        args = ['wofi', '--dmenu', '-p', prompt, '-Ddmenu-print_line_num=true']
+        args = [self.wofi_exe, '--dmenu', '-p', prompt, '-Ddmenu-print_line_num=true']
         if select is not None:
             args.extend(['-selected-row', str(select)])
 
@@ -512,7 +513,7 @@ class Wofi(object):
 
         # Keep going until we get something valid.
         while True:
-            args = ['wofi', '-dmenu', '-p', prompt]
+            args = [self.wofi_exe, '-dmenu', '-p', prompt]
 
             # Add any error to the given message.
             msg = message or ""
