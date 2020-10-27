@@ -223,7 +223,7 @@ class Wofi(object):
 
         # Use the run() method if available (Python 3.5+).
         if hasattr(subprocess, 'run'):
-            result = subprocess.run(args, input=input, check=True, **kwargs)
+            result = subprocess.run(args, input=input, check=False, **kwargs)
             return result.returncode, result.stdout
 
         # Have to do our own. If we need to feed stdin, we must open a pipe.
