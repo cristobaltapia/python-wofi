@@ -635,7 +635,7 @@ class Wofi(object):
 
         # Keep going until we get something valid.
         while True:
-            args = [self.wofi_exe, '-dmenu', '-p', prompt]
+            args = [self.wofi_exe, '--dmenu', '-p', prompt]
 
             # Add any error to the given message.
             msg = message or ""
